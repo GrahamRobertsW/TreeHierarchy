@@ -12,6 +12,10 @@ import joblib
 from io import BytesIO
 import base64
 
+#TreeHierarchy
+#   allows construction of custom hierarchical classifiers
+#   these allow for multiclass classification with indepenently tuned classifiers at each branch
+#   this is a recursie structure
 class TreeHierarchy:
 
     def _init_(self):
@@ -23,6 +27,7 @@ class TreeHierarchy:
         self.classB = None
         #self.__dict__ = self.vars()
 
+    
     def vars(self):
         outdict = {}
         for k in self.dir():
@@ -53,6 +58,7 @@ class TreeHierarchy:
     def add_right(self, entity):
         self.right = entity
 
+    #Fit follows the sklearn fit structure and recursively calls fit on each component tree
     def fit(self, X, y):
         if not getattr(self, 'terminal', False):
            templabels = np.zeros(X.shape[0])
@@ -67,6 +73,7 @@ class TreeHierarchy:
            self.right.fit(X[ib], y[ib])
         return
 
+    
     def predict(self, X):
         if X.shape[0] == 0:
             y = np.zeros(0)
@@ -89,6 +96,7 @@ class TreeHierarchy:
             y = np.array([self.terminal] * X.shape[0])
         return(y)
 
+    #Structure from json takes as input a json structure and constructs the tree based on that structure
     def structure_from_json(self, J):
         if 'class' in J.keys():
             self.terminal = J['class']
@@ -109,7 +117,10 @@ class TreeHierarchy:
             self.classA = J['classA']
             self.classB = J['classB']
 
+#Pass to json.dumps as an encoder class
+#decontructs the tree, component SVCs KRRs and npArrays into primitives as well.
 class TreeEncoder(json.JSONEncoder):
+
 
     def default(self, obj):
         """If input object is an ndarray it will be converted into a dict 
@@ -137,7 +148,7 @@ class TreeEncoder(json.JSONEncoder):
             super().default(obj)
 
 def json_decoder(dct):
-    """Decodes a previously encoded numpy ndarray with proper shape and dtype.
+    """Decodes a previously encoded TreeHierarchy, numpy ndarray with proper shape and dtype, SVC, or KRR.
 
     :param dct: (dict) json encoded ndarray
     :return: (ndarray) if input was an encoded ndarray
@@ -188,18 +199,18 @@ def json_decoder(dct):
 ###        return
 
 
-def classifier_from_json(J):
-    if J['type'] in ['svc', 'SVC']:
-        print("SVC")
-        K = J['kernel']
-        classifier = SVC(C = J['C'],
-        gamma = J['gamma'],
-        kernel = K['type'],
-        degree = K['degree'] if K['type'] == 'polynomial' else 1,
-        coef0 = J['coeff0'] if 'coeff0' in J.keys() else J['coef0'])
-        print(classifier)
-    else:
-        classifier = None
-    return(classifier)
+###def classifier_from_json(J):
+###    if J['type'] in ['svc', 'SVC']:
+###        print("SVC")
+###        K = J['kernel']
+###        classifier = SVC(C = J['C'],
+###        gamma = J['gamma'],
+###        kernel = K['type'],
+###        degree = K['degree'] if K['type'] == 'polynomial' else 1,
+###        coef0 = J['coeff0'] if 'coeff0' in J.keys() else J['coef0'])
+###        print(classifier)
+###    else:
+###        classifier = None
+###    return(classifier)
 
 
