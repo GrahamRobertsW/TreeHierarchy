@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-setup.cfg
-src/TreeHierarchy.egg-info/PKG-INFO
-src/TreeHierarchy.egg-info/SOURCES.txt
-src/TreeHierarchy.egg-info/dependency_links.txt
-src/TreeHierarchy.egg-info/requires.txt
-src/TreeHierarchy.egg-info/top_level.txt

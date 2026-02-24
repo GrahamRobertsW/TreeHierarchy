@@ -1,7 +1,7 @@
 TreeHierarchy
 Graham Roberts
 grahamrobertsw@gmail.com
-Code for creating a Hierarchiucal classifier
+Code for creating a Hierarchical classifier
 
 This is a very early version of the code.
 It is lacking some functionality, most notably mechanisms for programatically defining the structure.
